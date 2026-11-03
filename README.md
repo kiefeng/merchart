@@ -31,6 +31,10 @@ The interface follows Obsidian's language setting. Same layout either way.
 
 ![Merchart 界面（中文）](assets/mockup-zh.svg)
 
+On a phone the dialog goes full screen and the type list becomes a horizontal strip:
+
+![Merchart on mobile](assets/mockup-mobile-zh.svg)
+
 ## Why it is Chinese-friendly
 
 Mermaid's parser requires ASCII identifiers. Three failures hit Chinese users constantly:
@@ -106,13 +110,12 @@ Sixteen take structured Chinese input; six are editable templates because their 
 
 Obsidian 1.4 or newer. On 1.15 and later Mermaid blocks render through Pele, Obsidian's own renderer, and the preview follows automatically. The plugin does not depend on which renderer is in use.
 
-Desktop only: the layout uses a fixed side column and a drag handle, neither of which makes sense on a phone.
+Works on desktop and mobile. On narrow screens the dialog goes full screen, the type list turns into a horizontal strip at the top, and the drag handle is hidden since there is no pointer.
 
 ## Known limits
 
 - Six types are templates you edit directly rather than structured forms.
 - Reverse editing covers five types; the rest open as raw code in the input box.
-- Mobile is not supported: the layout assumes a pointer and a drag handle.
 
 ## Development
 
