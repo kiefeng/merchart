@@ -1,0 +1,461 @@
+/* Merchart — 颜色全部取自 Obsidian 主题变量 */
+
+.mc-modal {
+  width: min(900px, 88vw);
+  height: min(620px, 82vh);
+  min-width: 520px;
+  min-height: 380px;
+  padding: 0;
+}
+
+.mc-modal .modal-content {
+  position: relative;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.mc-modal .modal-close-button {
+  top: 10px;
+  right: 10px;
+  z-index: 30;
+}
+
+.mc-root {
+  display: grid;
+  grid-template-columns: 184px 1fr;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---------- 左栏 ---------- */
+
+.mc-side {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+}
+
+.mc-search {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 12px 10px;
+}
+
+.mc-search-icon {
+  display: flex;
+  color: var(--text-faint);
+  flex: 0 0 auto;
+}
+
+.mc-search-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.mc-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: var(--text-normal);
+  outline: none;
+}
+
+.mc-search-input::placeholder {
+  color: var(--text-faint);
+}
+
+.mc-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 8px 12px;
+}
+
+.mc-item {
+  padding: 7px 10px;
+  border-radius: var(--radius-s, 6px);
+  cursor: pointer;
+  margin-bottom: 2px;
+  transition: background 0.14s ease;
+}
+
+.mc-item:hover {
+  background: var(--background-modifier-hover);
+}
+
+.mc-item.is-active {
+  background: var(--interactive-accent);
+}
+
+.mc-item.is-active .mc-item-name,
+.mc-item.is-active .mc-item-en {
+  color: var(--text-on-accent);
+}
+
+.mc-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-normal);
+  line-height: 1.35;
+}
+
+.mc-item-en {
+  font-size: 10px;
+  color: var(--text-faint);
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  margin-top: 1px;
+}
+
+.mc-empty {
+  padding: 16px 10px;
+  font-size: 12px;
+  color: var(--text-faint);
+}
+
+/* ---------- 右栏 ---------- */
+
+.mc-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  padding: 14px 18px 10px;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.mc-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.mc-title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text-normal);
+}
+
+.mc-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.mc-input {
+  flex: 0 0 auto;
+  width: 100%;
+  height: 116px;
+  min-height: 76px;
+  resize: none;
+  padding: 9px 11px;
+  border-radius: var(--radius-m, 8px);
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+  color: var(--text-normal);
+  font-family: var(--font-monospace);
+  font-size: 12.5px;
+  line-height: 1.6;
+  outline: none;
+  transition: border-color 0.14s ease;
+}
+
+.mc-input:focus {
+  border-color: var(--interactive-accent);
+}
+
+.mc-rules {
+  flex: 0 0 auto;
+}
+
+.mc-rules-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--text-muted);
+  list-style: none;
+  user-select: none;
+}
+
+.mc-rules-summary::-webkit-details-marker {
+  display: none;
+}
+
+.mc-rules-summary::before {
+  content: "?";
+  display: inline-grid;
+  place-items: center;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid var(--text-faint);
+  font-size: 9px;
+  line-height: 1;
+  color: var(--text-faint);
+}
+
+.mc-rules-summary:hover {
+  color: var(--text-normal);
+}
+
+.mc-rules[open] .mc-rules-summary {
+  color: var(--text-normal);
+}
+
+.mc-rules-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-height: 64px;
+  overflow-y: auto;
+  padding-top: 4px;
+}
+
+.mc-rule {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  padding-left: 11px;
+  position: relative;
+}
+
+.mc-rule::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.mc-preview {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--background-modifier-border);
+  padding-top: 6px;
+  overflow: hidden;
+}
+
+.mc-preview-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.mc-preview-label {
+  font-size: 10.5px;
+  color: var(--text-faint);
+  letter-spacing: 0.05em;
+}
+
+.mc-refresh {
+  padding: 1px 9px;
+  font-size: 10.5px;
+  line-height: 1.6;
+  border-radius: var(--radius-s, 4px);
+  border: 1px solid var(--background-modifier-border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.14s ease, color 0.14s ease;
+}
+
+.mc-refresh:hover {
+  background: var(--background-modifier-hover);
+  color: var(--text-normal);
+}
+
+.mc-refresh[hidden] {
+  display: none;
+}
+
+.mc-preview-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2px;
+}
+
+.mc-preview-body .mermaid,
+.mc-preview-body .pele,
+.mc-preview-body > svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mc-preview-body .pele {
+  --pele-radius: var(--radius-s, 4px);
+}
+
+.mc-preview-empty {
+  color: var(--text-faint);
+  font-size: 12px;
+  padding: 20px 0;
+}
+
+.mc-preview-error {
+  color: var(--text-error, #e45756);
+  font-size: 12px;
+  padding: 16px 0;
+  text-align: center;
+}
+
+/* ---------- 底栏：始终可见 ---------- */
+
+.mc-foot {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 34px 9px 18px;
+  border-top: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+}
+
+.mc-warn {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 11px;
+  color: var(--text-warning, var(--text-muted));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mc-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mc-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-s, 6px);
+  border: 1px solid var(--background-modifier-border);
+  background: transparent;
+  color: var(--text-normal);
+  font-size: 12.5px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background 0.14s ease, opacity 0.14s ease;
+}
+
+.mc-btn:hover {
+  background: var(--background-modifier-hover);
+}
+
+.mc-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 18px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 12%);
+}
+
+.mc-btn-primary:hover {
+  background: var(--interactive-accent-hover);
+}
+
+.mc-btn-primary:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+}
+
+.mc-btn-icon {
+  display: flex;
+}
+
+.mc-btn-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.mc-kbd {
+  font-size: 10px;
+  font-family: var(--font-monospace);
+  opacity: 0.72;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  padding: 0 4px;
+  line-height: 1.5;
+}
+
+/* ---------- 右下角拖拽 ---------- */
+
+.mc-resizer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 22px;
+  height: 22px;
+  cursor: nwse-resize;
+  z-index: 25;
+  opacity: 0.42;
+  transition: opacity 0.14s ease;
+  background-image: linear-gradient(
+      135deg,
+      transparent 46%,
+      var(--text-faint) 46%,
+      var(--text-faint) 54%,
+      transparent 54%
+    ),
+    linear-gradient(
+      135deg,
+      transparent 66%,
+      var(--text-faint) 66%,
+      var(--text-faint) 74%,
+      transparent 74%
+    );
+}
+
+.mc-resizer:hover,
+body.mc-resizing .mc-resizer {
+  opacity: 1;
+}
+
+body.mc-resizing {
+  user-select: none;
+  cursor: nwse-resize;
+}
+
+.is-mobile .mc-resizer {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .mc-root {
+    grid-template-columns: 140px 1fr;
+  }
+
+  .mc-item-en {
+    display: none;
+  }
+}

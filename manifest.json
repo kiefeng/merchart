@@ -1,0 +1,10 @@
+{
+  "id": "merchart",
+  "name": "Merchart",
+  "version": "1.0.0",
+  "minAppVersion": "1.4.0",
+  "description": "Build Mermaid diagrams from plain Chinese text. Identifiers are generated for you and full-width punctuation is normalized.",
+  "author": "Kieran",
+  "authorUrl": "https://github.com/kiefeng",
+  "isDesktopOnly": true
+}
