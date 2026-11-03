@@ -2,10 +2,14 @@ import type { DiagramDef } from "./types";
 
 export type Lang = "zh" | "en";
 
-/** 传进 Obsidian 的界面语言；没传就退回系统语言 */
+/**
+ * 优先用文档语言（Obsidian 会把它同步到 <html lang>），再退回系统语言。
+ * 两者都不依赖 Obsidian API，所以不受 minAppVersion 限制，也不碰 localStorage。
+ */
 export function currentLang(locale?: string): Lang {
+  const docLang = typeof document !== "undefined" ? document.documentElement.lang : "";
   const fallback = typeof navigator !== "undefined" ? navigator.language : "";
-  const raw = (locale || fallback || "").toLowerCase();
+  const raw = (locale || docLang || fallback || "").toLowerCase();
   return raw.startsWith("zh") ? "zh" : "en";
 }
 

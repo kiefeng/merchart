@@ -367,7 +367,14 @@ export function buildRadar(text: string): BuildResult {
 
   if (axes.length === 0 || curves.length === 0) return { code: "", warnings: [...warnings, "至少要有「轴: ...」和一条曲线"] };
 
-  const max = Math.max(...curves.flatMap((c) => c.values.map((v) => Number(v))), 5);
+  const allValues: number[] = [];
+  for (const c of curves) {
+    for (const v of c.values) {
+      const n = Number(v);
+      if (Number.isFinite(n)) allValues.push(n);
+    }
+  }
+  const max = Math.max(5, ...allValues);
   const body: string[] = ["radar-beta"];
 
   const axisIds: string[] = [];

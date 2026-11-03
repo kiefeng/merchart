@@ -9,7 +9,6 @@ import {
   Plugin,
   PluginSettingTab,
   Setting,
-  getLanguage,
   setIcon,
 } from "obsidian";
 import type { SettingDefinitionItem } from "obsidian";
@@ -50,7 +49,7 @@ const DEFAULT_SETTINGS: MerchartSettings = {
 
 export default class MerchartPlugin extends Plugin {
   settings: MerchartSettings = { ...DEFAULT_SETTINGS };
-  lang: Lang = currentLang(getLanguage());
+  lang: Lang = currentLang();
   t: UiStrings = ui(this.lang);
 
   async onload(): Promise<void> {
