@@ -9,6 +9,7 @@
     "test": "npx esbuild test/run.ts --bundle --platform=node --format=cjs --outfile=test/run.cjs --log-level=warning && node test/run.cjs && npx esbuild test/edge.ts --bundle --platform=node --format=cjs --outfile=test/edge.cjs --log-level=warning && node test/edge.cjs && npx esbuild test/reverse.ts --bundle --platform=node --format=cjs --outfile=test/reverse.cjs --log-level=warning && node test/reverse.cjs"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^20.11.0",
     "builtin-modules": "^3.3.0",
     "esbuild": "^0.21.5",
