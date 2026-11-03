@@ -15,6 +15,14 @@
 - **中英双语界面**，跟随 Obsidian 的语言设置
 - **能填进已有的块**：光标停在未闭合的 ```` ```mermaid ```` 里时，只插入正文，不重复套围栏
 
+## 界面
+
+界面跟着 Obsidian 的语言设置走，两套布局一致。
+
+![Merchart 界面（中文）](assets/mockup-zh.svg)
+
+![Merchart interface in English](assets/mockup-en.svg)
+
 ## 为什么对中文友好
 
 Mermaid 的解析器要求标识符是 ASCII。中文用户几乎每天都会撞上这三类报错：

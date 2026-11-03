@@ -15,6 +15,14 @@ An Obsidian plugin that turns plain Chinese text into Mermaid diagrams.
 - **Bilingual UI**, follows Obsidian's language setting
 - **Fills an existing block**: with the cursor inside an open ```` ```mermaid ```` fence, it inserts only the body
 
+## Screenshots
+
+The interface follows Obsidian's language setting. Same layout either way.
+
+![Merchart interface in English](assets/mockup-en.svg)
+
+![Merchart 界面（中文）](assets/mockup-zh.svg)
+
 ## Why it is Chinese-friendly
 
 Mermaid's parser requires ASCII identifiers. Three failures hit Chinese users constantly:
