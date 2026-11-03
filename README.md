@@ -13,8 +13,10 @@ An Obsidian plugin that turns plain Chinese text into Mermaid diagrams.
 - **Live preview** while you type
 - **Seven commands**: one general inserter plus one per common type, all bindable to hotkeys
 - **Tab indents**, Shift+Tab outdents, selection-aware block indent
-- **Resizable dialog**, remembered as a share of the window so it survives a monitor change
+- **Resizable dialog** with zoomable preview (Ctrl/Cmd + wheel, double-click to reset), remembered as a share of the window so it survives a monitor change
 - **Bilingual UI**, follows Obsidian's language setting
+- **Reverse editing**: put the cursor inside an existing diagram and Merchart turns it back into the structured input (flowchart, sequence, pie, timeline, mindmap)
+- **Takes your selection**: select text in the note, open the dialog, it lands in the input box
 - **Fills an existing block**: with the cursor inside an open ```` ```mermaid ```` fence, it inserts only the body
 
 ## Screenshots
@@ -105,8 +107,8 @@ Desktop only: the layout uses a fixed side column and a drag handle, neither of 
 ## Known limits
 
 - Six types are templates you edit directly rather than structured forms.
-- No reverse editing yet: you cannot take an existing diagram back into the structured input.
-- No preview zoom.
+- Reverse editing covers five types; the rest open as raw code in the input box.
+- Mobile is not supported: the layout assumes a pointer and a drag handle.
 
 ## Development
 

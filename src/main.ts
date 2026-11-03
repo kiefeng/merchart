@@ -13,6 +13,7 @@ import {
 } from "obsidian";
 import { DIAGRAMS } from "./diagrams";
 import { buildFor } from "./build";
+import { detectKind, reverseFor } from "./reverse";
 import {
   currentLang,
   displayHint,
@@ -208,6 +209,7 @@ class DiagramModal extends Modal {
   private warnEl!: HTMLElement;
   private insertBtn!: HTMLButtonElement;
   private refreshBtn!: HTMLButtonElement;
+  private zoom = 1;
 
   constructor(app: App, editor: Editor, plugin: MerchartPlugin, preferred?: DiagramKind) {
     super(app);
@@ -293,6 +295,11 @@ class DiagramModal extends Modal {
     this.refreshBtn.addEventListener("click", () => void this.build());
     this.refreshBtn.toggleAttribute("hidden", this.plugin.settings.livePreview);
     this.previewEl = preview.createDiv({ cls: "mc-preview-body" });
+    this.previewEl.addEventListener("wheel", (evt) => this.onPreviewWheel(evt), { passive: false });
+    this.previewEl.addEventListener("dblclick", () => {
+      this.zoom = 1;
+      this.applyZoom();
+    });
 
     /* 底部 */
     const foot = root.createDiv({ cls: "mc-foot" });
@@ -321,6 +328,27 @@ class DiagramModal extends Modal {
     const startKind = this.plugin.initialKind(this.preferred);
     this.select(DIAGRAMS.find((d) => d.kind === startKind) ?? DIAGRAMS[0], false);
     this.attachResizer(modalEl);
+
+    const blockCode = this.extractBlockAtCursor();
+    if (blockCode) {
+      const kind = detectKind(blockCode);
+      const def = kind ? DIAGRAMS.find((d) => d.kind === kind) : undefined;
+      if (kind && def) {
+        this.select(def, false);
+        const reversed = reverseFor(kind, blockCode);
+        this.inputEl.value = reversed ?? blockCode;
+        this.autoSizeInput();
+        this.scheduleBuild(0);
+      }
+    } else {
+      const selection = this.editor.getSelection();
+      if (selection.trim()) {
+        this.inputEl.value = selection;
+        this.autoSizeInput();
+        this.scheduleBuild(0);
+      }
+    }
+
     window.setTimeout(() => this.inputEl.focus(), 30);
   }
 
@@ -328,6 +356,37 @@ class DiagramModal extends Modal {
     this.contentEl.empty();
     if (this.timer !== null) window.clearTimeout(this.timer);
     this.component.unload();
+  }
+
+  /** 光标停在已闭合的 mermaid 块里时，把块内代码取回来 */
+  private extractBlockAtCursor(): string | null {
+    const cursor = this.editor.getCursor();
+    const lastLine = this.editor.lastLine();
+
+    let start = -1;
+    for (let i = cursor.line; i >= 0; i -= 1) {
+      const line = this.editor.getLine(i).trim();
+      if (/^```mermaid$/i.test(line)) {
+        start = i;
+        break;
+      }
+      if (i !== cursor.line && line.startsWith("```")) return null;
+    }
+    if (start === -1) return null;
+
+    let end = -1;
+    for (let i = cursor.line; i <= lastLine; i += 1) {
+      if (i > start && this.editor.getLine(i).trim() === "```") {
+        end = i;
+        break;
+      }
+    }
+    if (end === -1) return null;
+
+    const lines: string[] = [];
+    for (let i = start + 1; i < end; i += 1) lines.push(this.editor.getLine(i));
+    const code = lines.join("\n").trim();
+    return code || null;
   }
 
   /** 右下角拖拽调节弹窗大小，尺寸按视口比例记下来，换屏幕也合适 */
@@ -368,6 +427,23 @@ class DiagramModal extends Modal {
       window.addEventListener("mousemove", onMove);
       window.addEventListener("mouseup", onUp);
     });
+  }
+
+  /* ---------------- 预览缩放 ---------------- */
+
+  private onPreviewWheel(evt: WheelEvent): void {
+    if (!evt.ctrlKey && !evt.metaKey) return;
+    evt.preventDefault();
+    const factor = evt.deltaY < 0 ? 1.12 : 1 / 1.12;
+    this.zoom = Math.min(3, Math.max(0.4, this.zoom * factor));
+    this.applyZoom();
+  }
+
+  private applyZoom(): void {
+    const svg = this.previewEl.querySelector("svg") as HTMLElement | null;
+    if (!svg) return;
+    svg.style.transformOrigin = "top center";
+    svg.style.transform = this.zoom === 1 ? "" : `scale(${this.zoom})`;
   }
 
   /* ---------------- 输入框键盘 ---------------- */
@@ -511,6 +587,7 @@ class DiagramModal extends Modal {
     const fence = "```mermaid\n" + result.code + "\n```";
     try {
       await MarkdownRenderer.render(this.app, fence, this.previewEl, "", this.component);
+      this.applyZoom();
     } catch (error) {
       this.previewEl.empty();
       this.previewEl.createDiv({ cls: "mc-preview-error", text: this.t.renderFailed });
