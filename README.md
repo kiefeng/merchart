@@ -20,6 +20,7 @@ An Obsidian plugin that makes Mermaid diagrams practical: write plain lines, wat
 - **Resizable dialog** with zoomable preview (Ctrl/Cmd + wheel, double-click to reset), remembered as a share of the window so it survives a monitor change
 - **Bilingual UI**, follows Obsidian's language setting
 - **Reverse editing**: put the cursor inside an existing diagram and Merchart turns it back into the structured input (flowchart, sequence, pie, timeline, mindmap)
+- **Edit from the block itself**: put the cursor inside a diagram and a pencil button appears on the fence line. One click, no command to remember.
 - **Takes your selection**: select text in the note, open the dialog, it lands in the input box
 - **Fills an existing block**: with the cursor inside an open ```` ```mermaid ```` fence, it inserts only the body
 
@@ -64,6 +65,8 @@ Not in the community store yet. Manual install:
 ## Usage
 
 Open the inserter from the command palette (**Insert diagram**), the editor right-click menu, or one of the per-type commands. Pick a type on the left, type in the middle, watch it render underneath.
+
+To revise an existing diagram you do not need a command: put the cursor inside the mermaid block and a pencil button appears on the fence line. Click it to edit. The button disappears when the cursor leaves the block.
 
 | Key | Action |
 |---|---|

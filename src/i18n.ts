@@ -40,6 +40,7 @@ export interface UiStrings {
   spaces: (n: number) => string;
   resizeHint: string;
   renderFailed: string;
+  commandEditHere: string;
 }
 
 const ZH: UiStrings = {
@@ -69,6 +70,7 @@ const ZH: UiStrings = {
   spaces: (n) => `${n} 个空格`,
   resizeHint: "拖动调整大小",
   renderFailed: "渲染失败，检查一下语法",
+  commandEditHere: "用 Merchart 编辑这张图",
 };
 
 const EN: UiStrings = {
@@ -98,6 +100,7 @@ const EN: UiStrings = {
   spaces: (n) => `${n} spaces`,
   resizeHint: "Drag to resize",
   renderFailed: "Render failed. Check the syntax.",
+  commandEditHere: "Edit this diagram with Merchart",
 };
 
 export function ui(lang: Lang): UiStrings {

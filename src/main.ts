@@ -3,6 +3,7 @@ import {
   Component,
   Editor,
   MarkdownRenderer,
+  MarkdownView,
   Modal,
   Notice,
   Platform,
@@ -25,6 +26,7 @@ import {
   type UiStrings,
 } from "./i18n";
 import type { BuildResult, DiagramDef, DiagramKind } from "./types";
+import { inlineEditExtension } from "./inline";
 
 interface MerchartSettings {
   /** "remember" 表示跟随上次使用的类型 */
@@ -69,6 +71,8 @@ export default class MerchartPlugin extends Plugin {
       });
     }
 
+    this.registerEditorExtension(inlineEditExtension(this));
+
     this.registerEvent(
       this.app.workspace.on("editor-menu", (menu, editor: Editor) => {
         menu.addItem((item) =>
@@ -91,6 +95,17 @@ export default class MerchartPlugin extends Plugin {
 
   openModal(editor: Editor, kind?: DiagramKind): void {
     new DiagramModal(this.app, editor, this, kind).open();
+  }
+
+  /** 代码块上的编辑按钮：先把光标放进块里，再走正常弹窗流程 */
+  editAtLine(line: number, kind?: DiagramKind): void {
+    const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+    if (!view) return;
+    const editor = view.editor;
+    if (line > editor.lastLine()) return;
+    const inside = line + 1 <= editor.lastLine() ? line + 1 : line;
+    editor.setCursor({ line: inside, ch: 0 });
+    this.openModal(editor, kind);
   }
 
   async remember(kind: DiagramKind): Promise<void> {
