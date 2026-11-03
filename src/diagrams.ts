@@ -1,5 +1,10 @@
 import type { DiagramDef } from "./types";
 
+/*
+ * 示例内容刻意保持中性：这份文件会随仓库公开，
+ * 不放任何具体行业、公司或产品信息。
+ */
+
 export const DIAGRAMS: DiagramDef[] = [
   {
     kind: "flowchart",
@@ -8,11 +13,11 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["流程", "流程圖", "flow", "flowchart", "步骤", "分支", "判断"],
     hint: "缩进表达层级，自动连线",
     hintEn: "Indent to nest, arrows connect automatically",
-    placeholder: ["患者就诊", "  营养筛查", "    口服营养补充", "    管饲", "  常规随访"].join("\n"),
+    placeholder: ["提交申请", "  资料审核", "    通过: 进入排期", "    退回: 补充材料", "  安排执行"].join("\n"),
     rules: [
       "一行一个节点，缩进表示它是上一级的下一环",
       "节点名后加 {} 画成菱形判断框",
-      "行首写「标签: 节点名」给这条连线加文字，例如「是: 启动筛查」",
+      "行首写「标签: 节点名」给这条连线加文字，例如「通过: 进入排期」",
     ],
     rulesEn: [
       "One node per line; indentation makes it a child of the line above",
@@ -28,7 +33,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["思维导图", "导图", "mind", "mindmap", "脑图", "大纲"],
     hint: "缩进即层级，第一行当根",
     hintEn: "Indentation is hierarchy, first line is the root",
-    placeholder: ["医学市场", "  肠内营养", "    老年肌少症", "    社区营养", "  肿瘤", "    胃癌三线"].join("\n"),
+    placeholder: ["知识管理", "  输入", "    阅读", "    摘录", "  整理", "    标签", "  输出", "    写作"].join("\n"),
     rules: ["第一行是根节点，后面每一级缩进代表一层分支", "只取第一个顶层节点当根，其余顶层节点会被忽略"],
     rulesEn: [
       "The first line is the root, every deeper level is a branch",
@@ -43,7 +48,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["时间线", "时间轴", "timeline", "历程", "里程碑"],
     hint: "「时间 : 事件」，同一时间可写多行",
     hintEn: "「time : event」, repeat the time to add more",
-    placeholder: ["2025 : 立项", "2025 : 方案定稿", "2026 : 获批上市", "2027 : 区域覆盖"].join("\n"),
+    placeholder: ["2025 : 项目启动", "2025 : 方案定稿", "2026 : 正式上线", "2027 : 覆盖扩展"].join("\n"),
     rules: [
       "一行一个事件，写成「时间 : 事件」",
       "同一个时间写多行，会自动归到同一个节点下",
@@ -64,17 +69,17 @@ export const DIAGRAMS: DiagramDef[] = [
     hint: "「甲 > 乙 : 消息」，参与者可省略",
     hintEn: "「A > B : message」, participants are optional",
     placeholder: [
-      "参与者: 医生, 系统, 药房",
+      "参与者: 用户, 服务端, 数据库",
       "",
-      "医生 > 系统 : 开具处方",
-      "系统 > 药房 : 推送医嘱",
-      "药房 > 系统 : 库存确认",
-      "系统 > 医生 : 发药完成",
+      "用户 > 服务端 : 提交表单",
+      "服务端 > 数据库 : 写入记录",
+      "数据库 > 服务端 : 确认写入",
+      "服务端 > 用户 : 返回结果",
     ].join("\n"),
     rules: [
       "消息写成「甲 > 乙 : 内容」，用 > 或 -> 都行",
       "参与者那行可以省略，插件会从消息里自动收集",
-      "先写「参与者: 医生, 系统」可以固定出场顺序",
+      "先写「参与者: 用户, 服务端」可以固定出场顺序",
     ],
     rulesEn: [
       "Write a message as 「A > B : text」, either > or -> works",
@@ -90,7 +95,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["类图", "class", "对象", "属性"],
     hint: "「类名: 属性, 属性」，再写关系",
     hintEn: "「ClassName: member, member」, then relations",
-    placeholder: ["药品: 通用名, 规格, 适应症", "处方: 日期, 审核", "药品 > 处方 : 被开具"].join("\n"),
+    placeholder: ["订单: 编号, 金额, 状态", "用户: 姓名, 邮箱", "用户 > 订单 : 创建"].join("\n"),
     rules: [
       "「类名: 属性, 属性」定义类，属性用逗号隔开",
       "「甲 > 乙 : 关系」画一条关系线，冒号后是线上的字",
@@ -111,11 +116,11 @@ export const DIAGRAMS: DiagramDef[] = [
     hint: "「甲 > 乙 : 触发条件」，[*] 是开始和结束",
     hintEn: "「A > B : trigger」, [*] marks start and end",
     placeholder: [
-      "[*] > 待审",
-      "待审 > 审核中 : 提交",
-      "审核中 > 通过 : 批准",
-      "审核中 > 驳回 : 补资料",
-      "通过 > [*]",
+      "[*] > 草稿",
+      "草稿 > 审核中 : 提交",
+      "审核中 > 已发布 : 通过",
+      "审核中 > 草稿 : 退回",
+      "已发布 > [*]",
     ].join("\n"),
     rules: ["一行一次流转，写成「甲 > 乙 : 触发条件」", "用 [*] 表示起点或终点", "触发条件可以不写"],
     rulesEn: [
@@ -132,7 +137,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["er", "实体", "关系图", "数据库", "表"],
     hint: "「实体: 字段, 字段」，再写关系",
     hintEn: "「Entity: field, field」, then relations",
-    placeholder: ["患者: 姓名, 年龄", "就诊记录: 日期, 诊断", "患者 > 就诊记录 : 产生"].join("\n"),
+    placeholder: ["用户: 姓名, 邮箱", "订单: 日期, 金额", "用户 > 订单 : 产生"].join("\n"),
     rules: ["「实体: 字段, 字段」定义实体", "「甲 > 乙 : 关系」画一对多关系", "只写实体名不写字段也行，会自动补占位字段"],
     rulesEn: [
       "Define an entity as 「Name: field, field」",
@@ -149,11 +154,12 @@ export const DIAGRAMS: DiagramDef[] = [
     hint: "「任务 | 开始 | 工期」，可分组",
     hintEn: "「task | start | duration」, sections optional",
     placeholder: [
-      "section: 准入",
-      "医保材料 | 2026-01-05 | 20",
-      "专家论证 | after 医保材料 | 10",
-      "section: 推广",
-      "城市会 | 2026-02-20 | 15",
+      "section: 设计",
+      "需求梳理 | 2026-01-05 | 10",
+      "方案定稿 | after 需求梳理 | 8",
+      "section: 开发",
+      "功能开发 | 2026-02-01 | 20",
+      "测试上线 | after 功能开发 | 10",
     ].join("\n"),
     rules: [
       "任务写成「任务 | 开始 | 工期」，工期写数字默认按天算",
@@ -174,7 +180,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["饼图", "饼状图", "pie", "占比", "构成"],
     hint: "「项目 : 数值」，一行一项",
     hintEn: "「item : value」, one per line",
-    placeholder: ["肠内营养 : 45", "麻醉 : 25", "心脑 : 18", "肿瘤 : 12"].join("\n"),
+    placeholder: ["桌面端 : 45", "移动端 : 30", "平板 : 15", "其他 : 10"].join("\n"),
     rules: ["一行一项，写成「项目 : 数值」", "数值不必是百分比，会按总量自动折算"],
     rulesEn: ["One item per line as 「item : value」", "Values do not need to be percentages"],
     mode: "builder",
@@ -187,11 +193,11 @@ export const DIAGRAMS: DiagramDef[] = [
     hint: "两轴 + 点，坐标写 0 到 1",
     hintEn: "Two axes plus points, coordinates 0 to 1",
     placeholder: [
-      "x轴: 低临床需求 > 高临床需求",
-      "y轴: 低竞争 > 高竞争",
-      "品种A: 0.75, 0.35",
-      "品种B: 0.3, 0.7",
-      "品种C: 0.6, 0.6",
+      "x轴: 低紧急 > 高紧急",
+      "y轴: 低重要 > 高重要",
+      "事项A: 0.75, 0.35",
+      "事项B: 0.3, 0.7",
+      "事项C: 0.6, 0.6",
     ].join("\n"),
     rules: ["「x轴: 低 --> 高」和「y轴: 低 --> 高」定义两条轴", "「名称: 0.7, 0.3」放一个点，坐标范围 0 到 1", "左下角是原点"],
     rulesEn: [
@@ -209,12 +215,12 @@ export const DIAGRAMS: DiagramDef[] = [
     hint: "分阶段，每步给 1 到 5 分",
     hintEn: "Sections, each step scored 1 to 5",
     placeholder: [
-      "section: 挂号",
-      "到达医院: 3",
-      "排队等候: 2",
-      "section: 诊疗",
-      "看诊沟通: 4",
-      "检查缴费: 2",
+      "section: 注册",
+      "访问首页: 3",
+      "填写信息: 2",
+      "section: 使用",
+      "浏览内容: 4",
+      "导出结果: 3",
     ].join("\n"),
     rules: ["用「section: 名称」分阶段", "每一步写成「动作: 分数」，分数 1 到 5", "分数越低表示越不顺畅"],
     rulesEn: [
@@ -231,7 +237,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["看板", "kanban", "任务", "待办"],
     hint: "顶格是列，缩进是卡片",
     hintEn: "Top level are columns, indented lines are cards",
-    placeholder: ["待办", "  整理指南要点", "  核对竞品数据", "进行中", "  专家沟通材料", "已完成", "  立项报告"].join(
+    placeholder: ["待办", "  整理需求清单", "  核对数据来源", "进行中", "  设计初稿", "已完成", "  项目启动"].join(
       "\n"
     ),
     rules: ["顶格写列名", "缩进写这一列里的卡片", "列的顺序就是显示顺序"],
@@ -249,7 +255,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["树图", "矩形树图", "treemap", "占比", "构成"],
     hint: "第一行是根，下面按数值分块",
     hintEn: "First line is the root, children sized by value",
-    placeholder: ["产品线", "  肠内营养: 45", "  麻醉: 25", "  肿瘤: 30"].join("\n"),
+    placeholder: ["内容分类", "  教程: 45", "  案例: 25", "  参考: 30"].join("\n"),
     rules: ["第一行是根节点", "缩进写子项，写成「名称: 数值」", "数值越大占的面积越大"],
     rulesEn: [
       "The first line is the root node",
@@ -265,7 +271,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["雷达", "radar", "多维", "对比"],
     hint: "先定轴，再给每条曲线打分",
     hintEn: "Define axes, then score each curve",
-    placeholder: ["轴: 疗效, 安全, 成本, 便利", "方案甲: 4, 5, 3, 4", "方案乙: 3, 4, 5, 3"].join("\n"),
+    placeholder: ["轴: 质量, 速度, 成本, 易用", "方案甲: 4, 5, 3, 4", "方案乙: 3, 4, 5, 3"].join("\n"),
     rules: ["「轴: 维度, 维度」定义几个维度", "「方案名: 分数, 分数」生成一条曲线", "数值个数要和轴的个数对上"],
     rulesEn: [
       "「axes: dim, dim」 defines the dimensions",
@@ -281,7 +287,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["桑基", "sankey", "流向", "流量"],
     hint: "「来源 > 去向 : 数值」",
     hintEn: "「source > target : value」",
-    placeholder: ["医生 > 门诊 : 60", "医生 > 病房 : 40", "门诊 > 处方 : 45", "病房 > 处方 : 35"].join("\n"),
+    placeholder: ["访问 > 注册 : 60", "访问 > 离开 : 40", "注册 > 下单 : 45", "注册 > 流失 : 15"].join("\n"),
     rules: ["一行一条流向，写成「来源 > 去向 : 数值」", "数值决定线条粗细", "同一层级的节点会自动对齐"],
     rulesEn: [
       "One flow per line as 「source > target : value」",
@@ -297,12 +303,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["xy", "柱状图", "折线图", "chart", "趋势"],
     hint: "x 写类别，y 写数值",
     hintEn: "x for categories, y for values",
-    placeholder: [
-      "标题: 季度覆盖医院数",
-      "x: Q1, Q2, Q3, Q4",
-      "y: 40, 85, 130, 175",
-      "类型: 柱状",
-    ].join("\n"),
+    placeholder: ["标题: 季度活跃用户", "x: Q1, Q2, Q3, Q4", "y: 40, 85, 130, 175", "类型: 柱状"].join("\n"),
     rules: ["「x: 类别, 类别」定义横轴", "「y: 数值, 数值」对应每个类别", "「类型: 柱状」或「类型: 折线」"],
     rulesEn: [
       "「x: label, label」 defines the x axis",
@@ -346,12 +347,12 @@ export const DIAGRAMS: DiagramDef[] = [
     hintEn: "Template, edit in place",
     placeholder: [
       "C4Context",
-      "  title 医学内容平台",
-      '  Person(doctor, "医生", "内容使用者")',
-      '  System(platform, "内容平台", "资料与培训")',
-      '  System_Ext(crm, "客户系统", "外部数据")',
-      '  Rel(doctor, platform, "浏览")',
-      '  Rel(platform, crm, "同步")',
+      "  title 内容平台",
+      '  Person(user, "用户", "内容使用者")',
+      '  System(platform, "内容平台", "资料与检索")',
+      '  System_Ext(storage, "对象存储", "外部服务")',
+      '  Rel(user, platform, "浏览")',
+      '  Rel(platform, storage, "读取")',
     ].join("\n"),
     rules: ["这是模板，直接改里面的文字", "括号里第一个是英文 id，第二个才是显示名", "Rel 用来画关系"],
     rulesEn: [
@@ -372,7 +373,7 @@ export const DIAGRAMS: DiagramDef[] = [
       "requirementDiagram",
       "    requirement req1 {",
       "    id: 1",
-      '    text: "所有推广材料需经医学审核"',
+      '    text: "所有发布内容需经审核"',
       "    risk: high",
       "    verifymethod: inspection",
       "    }",
@@ -400,7 +401,7 @@ export const DIAGRAMS: DiagramDef[] = [
     aliases: ["块", "block", "分区", "布局"],
     hint: "模板，改字即用",
     hintEn: "Template, edit in place",
-    placeholder: ["block-beta", "  columns 3", "  立项 论证 审批", "  space 上市 space"].join("\n"),
+    placeholder: ["block-beta", "  columns 3", "  立项 设计 开发", "  space 上线 space"].join("\n"),
     rules: ["这是模板，直接改里面的文字", "columns 决定一行放几块", "space 表示空位"],
     rulesEn: ["This is a template, just edit the text", "columns sets how many blocks per row", "space leaves an empty slot"],
     mode: "template",
@@ -430,10 +431,10 @@ export const DIAGRAMS: DiagramDef[] = [
     hintEn: "Template, edit in place",
     placeholder: [
       "architecture-beta",
-      "  group lan(cloud)[内部网络]",
-      "  service db(database)[CouchDB] in lan",
-      "  service api(server)[同步服务] in lan",
-      "  service app(disk)[Obsidian]",
+      "  group lan(cloud)[内网]",
+      "  service db(database)[数据库]",
+      "  service api(server)[接口服务]",
+      "  service app(disk)[客户端]",
       "  app:R -- L:api",
       "  api:R -- L:db",
     ].join("\n"),

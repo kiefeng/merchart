@@ -23,7 +23,7 @@ Mermaid's parser requires ASCII identifiers. Three failures hit Chinese users co
 |---|---|
 | `branch 内容线` in a Git graph | `Lexical error: Unrecognized text` |
 | `医生，门诊，60` in a Sankey diagram | `Expecting 'COMMA', got 'NON_ESCAPED_TEXT'` |
-| `text: 所有推广材料需经医学审核` in a requirement | `Lexical error` |
+| `text: 所有发布内容需经审核` in a requirement | `Lexical error` |
 
 Merchart handles all three before the parser ever sees the text:
 

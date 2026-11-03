@@ -23,7 +23,7 @@ Mermaid 的解析器要求标识符是 ASCII。中文用户几乎每天都会撞
 |---|---|
 | Git 图里的 `branch 内容线` | `Lexical error: Unrecognized text` |
 | 桑基图里的 `医生，门诊，60` | `Expecting 'COMMA', got 'NON_ESCAPED_TEXT'` |
-| 需求图里的 `text: 所有推广材料需经医学审核` | `Lexical error` |
+| 需求图里的 `text: 所有发布内容需经审核` | `Lexical error` |
 
 Merchart 在解析器看到这些内容之前就把问题处理掉了：
 
