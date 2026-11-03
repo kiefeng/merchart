@@ -4,6 +4,12 @@
 
 An Obsidian plugin that turns plain Chinese text into Mermaid diagrams.
 
+Three things it does well:
+
+- **Simple and direct.** One line per node, indentation for nesting, live preview while you type. No syntax to memorize.
+- **Chinese-native.** Identifiers are generated for you, full-width punctuation is normalized, labels keep your text. The parser errors Chinese input usually causes cannot happen.
+- **Ready for Obsidian 1.15 and Pele.** Diagrams render through Pele, Obsidian's new renderer, and the preview follows automatically. No setting to change.
+
 **中文说明见 [README.zh.md](README.zh.md)**
 
 ## Features
