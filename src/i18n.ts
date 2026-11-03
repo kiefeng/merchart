@@ -2,16 +2,11 @@ import type { DiagramDef } from "./types";
 
 export type Lang = "zh" | "en";
 
-/** Obsidian 的界面语言存在 localStorage 的 language 键里，没设过就看系统语言 */
-export function currentLang(): Lang {
-  let raw = "";
-  try {
-    raw = window.localStorage.getItem("language") ?? "";
-  } catch {
-    raw = "";
-  }
-  if (!raw) raw = navigator.language ?? "";
-  return raw.toLowerCase().startsWith("zh") ? "zh" : "en";
+/** 传进 Obsidian 的界面语言；没传就退回系统语言 */
+export function currentLang(locale?: string): Lang {
+  const fallback = typeof navigator !== "undefined" ? navigator.language : "";
+  const raw = (locale || fallback || "").toLowerCase();
+  return raw.startsWith("zh") ? "zh" : "en";
 }
 
 export interface UiStrings {

@@ -5,8 +5,8 @@
 | 项目 | 状态 |
 |---|---|
 | 仓库 | https://github.com/kiefeng/merchart |
-| manifest 版本 | 1.0.0 |
-| GitHub release | tag `1.0.0`（不带 v），附 `main.js`、`manifest.json`、`styles.css` |
+| manifest 版本 | 1.1.0 |
+| GitHub release | tag `1.1.0`（不带 v），附 `main.js`、`manifest.json`、`styles.css` |
 | tag 与版本号 | 一致 |
 | LICENSE | MIT |
 | README | 英文 + 中文两份 |
@@ -48,5 +48,6 @@
 ## 容易踩的点
 
 - `id` 里不能出现 `obsidian` 这个词，我们的 `merchart` 没问题。
-- `manifest.json` 的 `version` 必须和 release 的 tag 完全一致，**tag 不能带 v 前缀**：写 `1.0.0`，不能写 `v1.0.0`。这是提交时最常见的卡点。
+- `manifest.json` 的 `version` 必须和 release 的 tag 完全一致，**tag 不能带 v 前缀**：写 `1.1.0`，不能写 `v1.1.0`。这是提交时最常见的卡点。
+- 每次改版本都要重新提交一次目录；目录扫描的是仓库默认分支 HEAD 上的 manifest，不是旧 release。
 - 每次发新版本，都要同时：改 manifest 版本 → 打同 tag 的 release（不带 v）→ 传三个附件。少一步用户在 Obsidian 里更新就会失败。

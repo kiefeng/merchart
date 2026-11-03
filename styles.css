@@ -489,7 +489,6 @@ body.mc-resizing {
     padding: 2px 12px 10px;
     overflow-x: auto;
     overflow-y: hidden;
-    scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
 

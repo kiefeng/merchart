@@ -9,8 +9,10 @@ import {
   Plugin,
   PluginSettingTab,
   Setting,
+  getLanguage,
   setIcon,
 } from "obsidian";
+import type { SettingDefinitionItem } from "obsidian";
 import { DIAGRAMS } from "./diagrams";
 import { buildFor } from "./build";
 import { detectKind, reverseFor } from "./reverse";
@@ -48,7 +50,7 @@ const DEFAULT_SETTINGS: MerchartSettings = {
 
 export default class MerchartPlugin extends Plugin {
   settings: MerchartSettings = { ...DEFAULT_SETTINGS };
-  lang: Lang = currentLang();
+  lang: Lang = currentLang(getLanguage());
   t: UiStrings = ui(this.lang);
 
   async onload(): Promise<void> {
@@ -119,13 +121,75 @@ class MerchartSettingTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
+  /** Obsidian 1.13+ 的声明式设置，同时保留 display() 给老版本 */
+  getSettingDefinitions(): SettingDefinitionItem[] {
+    const t = this.plugin.t;
+    const lang = this.plugin.lang;
+    const kindOptions: Record<string, string> = { remember: t.rememberLast };
+    for (const d of DIAGRAMS) kindOptions[d.kind] = displayName(d, lang);
+
+    return [
+      {
+        type: "group",
+        heading: t.settingsTitle,
+        items: [
+          {
+            name: t.defaultKind,
+            desc: t.defaultKindDesc,
+            control: { type: "dropdown", key: "defaultKind", options: kindOptions },
+          },
+          {
+            name: t.indentSize,
+            desc: t.indentSizeDesc,
+            control: {
+              type: "dropdown",
+              key: "indentSize",
+              options: { "2": t.spaces(2), "4": t.spaces(4) },
+            },
+          },
+          {
+            name: t.closeAfterInsert,
+            desc: t.closeAfterInsertDesc,
+            control: { type: "toggle", key: "closeAfterInsert" },
+          },
+          {
+            name: t.autoBlankLine,
+            desc: t.autoBlankLineDesc,
+            control: { type: "toggle", key: "autoBlankLine" },
+          },
+          {
+            name: t.livePreview,
+            desc: t.livePreviewDesc,
+            control: { type: "toggle", key: "livePreview" },
+          },
+        ],
+      },
+    ];
+  }
+
+  getControlValue(key: string): unknown {
+    const settings = this.plugin.settings as unknown as Record<string, unknown>;
+    if (key === "indentSize") return String(settings.indentSize ?? 2);
+    return settings[key];
+  }
+
+  async setControlValue(key: string, value: unknown): Promise<void> {
+    const settings = this.plugin.settings as unknown as Record<string, unknown>;
+    if (key === "indentSize") {
+      settings.indentSize = Number(value) === 4 ? 4 : 2;
+    } else {
+      settings[key] = value;
+    }
+    await this.plugin.saveSettings();
+  }
+
   display(): void {
     const { containerEl } = this;
     const t = this.plugin.t;
     const lang = this.plugin.lang;
     containerEl.empty();
 
-    containerEl.createEl("h2", { text: t.settingsTitle });
+    new Setting(containerEl).setName(t.settingsTitle).setHeading();
 
     new Setting(containerEl)
       .setName(t.defaultKind)
@@ -239,10 +303,10 @@ class DiagramModal extends Modal {
     const ratioW = this.plugin.settings.modalWidthRatio;
     const ratioH = this.plugin.settings.modalHeightRatio;
     if (ratioW && ratioW > 0.2 && ratioW <= 1) {
-      modalEl.style.width = `${Math.round(window.innerWidth * ratioW)}px`;
+      modalEl.setCssStyles({ width: `${Math.round(window.innerWidth * ratioW)}px` });
     }
     if (ratioH && ratioH > 0.2 && ratioH <= 1) {
-      modalEl.style.height = `${Math.round(window.innerHeight * ratioH)}px`;
+      modalEl.setCssStyles({ height: `${Math.round(window.innerHeight * ratioH)}px` });
     }
 
     const root = contentEl.createDiv({ cls: "mc-root" });
@@ -409,8 +473,7 @@ class DiagramModal extends Modal {
         const maxH = window.innerHeight - 48;
         const w = Math.min(Math.max(520, startW + (e.clientX - startX)), maxW);
         const h = Math.min(Math.max(360, startH + (e.clientY - startY)), maxH);
-        modalEl.style.width = `${Math.round(w)}px`;
-        modalEl.style.height = `${Math.round(h)}px`;
+        modalEl.setCssStyles({ width: `${Math.round(w)}px`, height: `${Math.round(h)}px` });
       };
 
       const onUp = (): void => {
@@ -442,8 +505,10 @@ class DiagramModal extends Modal {
   private applyZoom(): void {
     const svg = this.previewEl.querySelector("svg") as HTMLElement | null;
     if (!svg) return;
-    svg.style.transformOrigin = "top center";
-    svg.style.transform = this.zoom === 1 ? "" : `scale(${this.zoom})`;
+    svg.setCssStyles({
+      transformOrigin: "top center",
+      transform: this.zoom === 1 ? "" : `scale(${this.zoom})`,
+    });
   }
 
   /* ---------------- 输入框键盘 ---------------- */
@@ -464,12 +529,14 @@ class DiagramModal extends Modal {
   private autoSizeInput(): void {
     const el = this.inputEl;
     if (!el) return;
-    el.style.height = "auto";
+    el.setCssStyles({ height: "auto" });
     const modalH = this.modalEl.getBoundingClientRect().height || window.innerHeight * 0.6;
     const max = Math.max(96, Math.round(modalH * 0.42));
     const next = Math.min(el.scrollHeight, max);
-    el.style.height = `${next}px`;
-    el.style.overflowY = el.scrollHeight > max ? "auto" : "hidden";
+    el.setCssStyles({
+      height: `${next}px`,
+      overflowY: el.scrollHeight > max ? "auto" : "hidden",
+    });
   }
 
   private indentBlock(forward: boolean): void {
