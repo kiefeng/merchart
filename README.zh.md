@@ -1,3 +1,5 @@
+<img src="assets/logo.svg" width="88" alt="Merchart">
+
 # Merchart
 
 一个 Obsidian 插件，用中文写内容，生成合法的 Mermaid 图。

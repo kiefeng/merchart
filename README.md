@@ -1,3 +1,5 @@
+<img src="assets/logo.svg" width="88" alt="Merchart">
+
 # Merchart
 
 An Obsidian plugin that turns plain Chinese text into Mermaid diagrams.
