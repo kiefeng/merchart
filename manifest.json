@@ -3,7 +3,7 @@
   "name": "Merchart",
   "version": "1.0.0",
   "minAppVersion": "1.4.0",
-  "description": "Build Mermaid diagrams from plain Chinese text. Identifiers are generated for you and full-width punctuation is normalized.",
+  "description": "Write Mermaid diagrams without the syntax: 22 types, live preview, one-click insert. Chinese input gets extra handling for identifiers and punctuation.",
   "author": "Kieran",
   "authorUrl": "https://github.com/kiefeng",
   "isDesktopOnly": true

@@ -2,12 +2,10 @@
 
 # Merchart
 
-An Obsidian plugin that turns plain Chinese text into Mermaid diagrams.
+An Obsidian plugin that makes Mermaid diagrams practical: write plain lines, watch them render, insert in one click.
 
-Three things it does well:
-
-- **Simple and direct.** One line per node, indentation for nesting, live preview while you type. No syntax to memorize.
-- **Chinese-native.** Identifiers are generated for you, full-width punctuation is normalized, labels keep your text. The parser errors Chinese input usually causes cannot happen.
+- **Write Mermaid without the syntax.** One line per node, indentation for nesting, live preview while you type. 22 diagram types, all of them.
+- **Chinese input gets extra handling.** If you write Chinese, identifiers are generated for you, full-width punctuation is normalized, and your text stays as labels. The parser errors Chinese usually causes cannot happen.
 - **Ready for Obsidian 1.15 and Pele.** Diagrams render through Pele, Obsidian's new renderer, and the preview follows automatically. No setting to change.
 
 **中文说明见 [README.zh.md](README.zh.md)**
