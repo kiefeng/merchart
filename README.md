@@ -1,12 +1,37 @@
 # Merchart
 
-Build Mermaid diagrams from plain Chinese text, without memorizing the syntax that breaks the moment you type Chinese.
+An Obsidian plugin that turns plain Chinese text into Mermaid diagrams.
 
-## Why this exists
+**中文说明见 [README.zh.md](README.zh.md)**
 
-Mermaid identifiers have to be ASCII. Type `branch 内容线` and the parser stops with `Lexical error: Unrecognized text`. Use a full-width comma `，` in a Sankey line and it complains it expected `COMMA` and got `NON_ESCAPED_TEXT`. Drop an unquoted Chinese string into a requirement's `text` field and it fails the same way.
+## Features
 
-If you write in Chinese, you hit one of these almost every time. Merchart takes ordinary Chinese lines, generates the ASCII identifiers for you, keeps your Chinese as labels, and normalizes full-width punctuation before anything reaches the parser.
+- **22 diagram types**, covering everything Obsidian's renderer supports
+- **Built for Chinese input**: identifiers are generated for you, full-width punctuation is normalized, labels keep your text
+- **Live preview** while you type
+- **Seven commands**: one general inserter plus one per common type, all bindable to hotkeys
+- **Tab indents**, Shift+Tab outdents, selection-aware block indent
+- **Resizable dialog**, remembered as a share of the window so it survives a monitor change
+- **Bilingual UI**, follows Obsidian's language setting
+- **Fills an existing block**: with the cursor inside an open ```` ```mermaid ```` fence, it inserts only the body
+
+## Why it is Chinese-friendly
+
+Mermaid's parser requires ASCII identifiers. Three failures hit Chinese users constantly:
+
+| What you type | What Mermaid says |
+|---|---|
+| `branch 内容线` in a Git graph | `Lexical error: Unrecognized text` |
+| `医生，门诊，60` in a Sankey diagram | `Expecting 'COMMA', got 'NON_ESCAPED_TEXT'` |
+| `text: 所有推广材料需经医学审核` in a requirement | `Lexical error` |
+
+Merchart handles all three before the parser ever sees the text:
+
+1. **Identifiers become ASCII.** Nodes, branches, entities and axes get `n1`, `p1`, `t1` style ids; your Chinese goes into the label.
+2. **Full-width punctuation is folded.** `，` `：` `；` `（）` `【】` `｜` and friends are converted first.
+3. **Quotes and brackets inside labels are escaped**, so a label containing `"` or `[` cannot truncate the statement.
+
+You write what you mean; the plugin produces what the parser accepts.
 
 ## Install
 
@@ -18,17 +43,20 @@ Not in the community store yet. Manual install:
 
 ## Usage
 
-Open the inserter from the command palette (**Insert diagram**), the editor right-click menu, or one of the six per-type commands. Pick a type on the left, type your content in the middle, and the diagram renders underneath as you go.
+Open the inserter from the command palette (**Insert diagram**), the editor right-click menu, or one of the per-type commands. Pick a type on the left, type in the middle, watch it render underneath.
 
-- `Ctrl` / `Cmd` + `Enter` inserts
-- `Tab` / `Shift+Tab` indents and outdents the selection
-- Drag the bottom-right corner to resize; the size is remembered as a share of the window, so it survives a monitor change
+| Key | Action |
+|---|---|
+| `Ctrl` / `Cmd` + `Enter` | Insert |
+| `Tab` | Indent, or indent every selected line |
+| `Shift` + `Tab` | Outdent |
+| Drag bottom-right corner | Resize the dialog |
 
 ## Diagram types
 
-All 22 types Obsidian renders are covered. Sixteen take structured Chinese input; six are editable templates because their syntax is declarative.
+Sixteen take structured Chinese input; six are editable templates because their syntax is declarative.
 
-| Type | Input |
+| Type | Input format |
 |---|---|
 | Flowchart | indented lines, `name{}` for decisions, `label: name` for edge labels |
 | Mindmap | indented lines, first line is the root |
@@ -46,20 +74,7 @@ All 22 types Obsidian renders are covered. Sixteen take structured Chinese input
 | Radar | `axes: a, b, c`, then `Serie: 1, 2, 3` |
 | Sankey | `source > target : value` |
 | XY chart | `x: ...`, `y: ...`, `type: bar` or `line` |
-| Git graph | template |
-| C4 | template |
-| Requirement | template |
-| Block | template |
-| Packet | template |
-| Architecture | template |
-
-## What happens to your Chinese
-
-Three things, applied to every diagram:
-
-1. **Identifiers become ASCII.** Nodes, branches, entities and axes get `n1`, `p1`, `t1` style ids; your Chinese text goes into the label instead. The `Lexical error` class of failure cannot happen.
-2. **Full-width punctuation is folded.** `，` `：` `；` `（）` `【】` `｜` and their relatives are converted before parsing.
-3. **Quotes and brackets inside labels are escaped**, so a label containing `"` or `[` will not truncate the statement.
+| Git graph, C4, Requirement, Block, Packet, Architecture | editable templates |
 
 ## Settings
 
@@ -73,31 +88,25 @@ Three things, applied to every diagram:
 
 ## Compatibility
 
-Obsidian 1.4 or newer. On 1.15 and later, Mermaid blocks are rendered by Pele, Obsidian's own renderer, and the preview follows automatically. The plugin does not depend on which renderer is in use.
+Obsidian 1.4 or newer. On 1.15 and later Mermaid blocks render through Pele, Obsidian's own renderer, and the preview follows automatically. The plugin does not depend on which renderer is in use.
 
 Desktop only: the layout uses a fixed side column and a drag handle, neither of which makes sense on a phone.
 
 ## Known limits
 
-- Six types (Git graph, C4, requirement, block, packet, architecture) are templates you edit directly rather than structured forms.
-- No reverse editing yet: you cannot take an existing diagram and turn it back into the structured input.
-- Preview zoom is not implemented.
+- Six types are templates you edit directly rather than structured forms.
+- No reverse editing yet: you cannot take an existing diagram back into the structured input.
+- No preview zoom.
 
 ## Development
 
 ```bash
 npm install
 npm run build          # typecheck + bundle to main.js
-npm test               # covered types plus edge cases, rendered through Pele
+npm test               # 22 diagram types plus 18 edge cases, rendered through Pele
 ```
 
-The tests bundle with esbuild and render every generated diagram through `pele`, so a syntax regression fails the build rather than showing up as a broken diagram in the vault.
-
-## 中文说明
-
-Merchart 用中文写内容，生成合法的 Mermaid 代码。标识符自动转成 ASCII，中文全部作为标签保留，全角标点会先归一化再解析。覆盖 Obsidian 支持的全部 22 种图，其中 16 种是结构化输入，6 种是可编辑模板。
-
-命令面板搜「插入图」，或在编辑器里右键。左侧选类型，中间填内容，下面实时预览，`Ctrl+Enter` 插入。
+Every generated diagram is rendered through `pele` during tests, so a syntax regression fails the build instead of showing up as a broken diagram in your vault.
 
 ## License
 
