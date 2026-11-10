@@ -31,6 +31,10 @@ const CASES: EdgeCase[] = [
   { name: "看板只有卡片没有列", kind: "kanban", input: "  孤儿卡片" },
   { name: "树图缺根", kind: "treemap", input: "  孤儿: 10" },
   { name: "旅程分数越界", kind: "journey", input: "section: 甲\n步骤: 99" },
+  { name: "桑基图中文节点名改流程图", kind: "sankey", input: "访问 > 注册 : 60\n注册 > 下单 : 45" },
+  { name: "桑基图英文节点名仍是桑基", kind: "sankey", input: "visit > signup : 60" },
+  { name: "XY 多组数据", kind: "xychart", input: "x: Q1, Q2, Q3\n柱: 今年, 40, 85, 130\n线: 去年, 30, 70, 110" },
+  { name: "XY 数值个数不匹配", kind: "xychart", input: "x: A, B, C\n柱: 1, 2" },
 ];
 
 let ok = 0;

@@ -203,7 +203,7 @@ export const FULL_TEMPLATES: Record<DiagramKind, string> = {
 
   /* ------------------------------------------------------------------ */
   sankey: `sankey-beta
-  %% 节点名只能是英文、数字、下划线，中文会让整张图解析失败（渲染器只认 ASCII）
+  %% 节点名只能是英文、数字、下划线；写中文会自动改成流程图版
   %% 三列：来源、去向、数值；数值决定连线粗细
   visit,signup,60
   visit,bounce,40

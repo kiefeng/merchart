@@ -61,6 +61,8 @@
     <!-- header -->
     <text x="256" y="80" font-size="14.5" font-weight="600" fill="#dcddde">Flowchart</text>
     <text x="336" y="80" font-size="11.5" fill="#9a9a9a">Indent to nest, arrows connect automatically</text>
+    <rect x="1046" y="66" width="94" height="21" rx="4" fill="none" stroke="#3f3f3f"/>
+    <text x="1093" y="80.5" font-size="10.5" fill="#8a8a8a" text-anchor="middle">Full template</text>
 
     <!-- input -->
     <rect x="256" y="94" width="884" height="132" rx="8" fill="#1a1a1a" stroke="#383838"/>

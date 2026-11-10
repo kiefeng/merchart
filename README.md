@@ -53,7 +53,7 @@ Merchart handles all three before the parser ever sees the text:
 2. **Full-width punctuation is folded.** `，` `：` `；` `（）` `【】` `｜` and friends are converted first.
 3. **Quotes and brackets inside labels are escaped**, so a label containing `"` or `[` cannot truncate the statement.
 
-One exception worth stating plainly: **Sankey node names must be ASCII**. Obsidian 1.15's renderer only accepts printable ASCII inside a Sankey cell, so a Chinese node name fails to parse even when quoted. The plugin warns when it sees one; use English, pinyin, or a flowchart instead.
+One exception worth stating plainly: **Sankey node names must be ASCII**. Obsidian 1.15's renderer only accepts printable ASCII inside a Sankey cell, so a Chinese node name fails to parse even when quoted. When a name is not ASCII the plugin draws a flowchart version instead: same flows, values on the arrows, arrow widths scaled by volume.
 
 You write what you mean; the plugin produces what the parser accepts.
 
@@ -98,8 +98,8 @@ Sixteen take structured input; six are editable templates because their syntax i
 | Kanban | columns at the margin, cards indented |
 | Treemap | root first, then `name: value` |
 | Radar | `axes: a, b, c`, then `Serie: 1, 2, 3` |
-| Sankey | `source > target : value` |
-| XY chart | `x: ...`, `y: ...`, `type: bar` or `line` |
+| Sankey | `source > target : value`; ASCII names give a Sankey, Chinese names fall back to a flowchart |
+| XY chart | `x: ...` then `bar: 2026, 40, 85` / `line: 2025, 30, 70`; a single series uses `y: ...` with `type: bar` or `line` |
 | Git graph, C4, Requirement, Block, Packet, Architecture | editable templates |
 
 ## Settings
@@ -121,7 +121,7 @@ Works on desktop and mobile. On narrow screens the dialog goes full screen, the 
 ## Known limits
 
 - Six types only offer code templates, with no structured form (the other sixteen can switch over).
-- Sankey node names are ASCII only; Chinese names cannot be drawn, which is a renderer limit.
+- Sankey node names are ASCII only, a renderer limit; Chinese names fall back to a flowchart with values on the arrows, which is not a real Sankey.
 - XY charts have no data labels; add a table when the exact numbers matter.
 - Reverse editing covers five types, and only when the code round-trips exactly; anything with subgraphs, styling or comments opens as code instead of being quietly simplified.
 
@@ -130,7 +130,7 @@ Works on desktop and mobile. On narrow screens the dialog goes full screen, the 
 ```bash
 npm install
 npm run build          # typecheck + bundle to main.js
-npm test               # 22 diagram types, 18 edge cases and 22 full templates, rendered through Pele
+npm test               # 22 diagram types, 22 edge cases and 22 full templates, rendered through Pele
 ```
 
 Every generated diagram is rendered through `pele` during tests, so a syntax regression fails the build instead of showing up as a broken diagram in your vault.

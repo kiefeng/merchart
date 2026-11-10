@@ -109,7 +109,8 @@ for (const c of cases) {
   }
 }
 
-/* 桑基图：Obsidian 1.15 的渲染器只认 ASCII 单元格，中文节点名整张图都画不出来 */
+/* 桑基图：节点名只能是 ASCII（Obsidian 1.15 的渲染器只认 ASCII 单元格），
+   中文节点名自动改画流程图版，别让它硬渲染一张报错的桑基图 */
 const sankeyDef = DIAGRAMS.find((d) => d.kind === "sankey")!;
 const sankeyBody = FULL_TEMPLATES.sankey
   .split("\n")
@@ -124,13 +125,28 @@ if (/[^\x20-\x7E\n]/.test(sankeyBody)) {
   console.log("[OK]   桑基图模板节点名全是 ASCII");
 }
 
-const chineseName = buildFor(sankeyDef, "访问 > 注册 : 60");
-if (chineseName.warnings.some((w) => w.includes("解析失败"))) {
+const chineseFlow = buildFor(sankeyDef, "访问 > 注册 : 60\n访问 > 离开 : 40");
+if (chineseFlow.code.startsWith("flowchart") && chineseFlow.warnings.some((w) => w.includes("流程图"))) {
   pass += 1;
-  console.log("[OK]   中文节点名给出 ASCII 提示");
+  console.log("[OK]   中文节点名自动转流程图版");
+  try {
+    render(chineseFlow.code, { fontFamily: "sans-serif" });
+  } catch (e) {
+    fail += 1;
+    problems.push(`中文流程图版渲染失败：${(e as Error).message.slice(0, 120)}`);
+  }
 } else {
   fail += 1;
-  problems.push("中文节点名没有提示渲染器只认 ASCII");
+  problems.push(`中文节点名没有转成流程图版：${chineseFlow.code.split("\n")[0]}`);
+}
+
+const asciiFlow = buildFor(sankeyDef, "visit > signup : 60");
+if (asciiFlow.code.startsWith("sankey-beta")) {
+  pass += 1;
+  console.log("[OK]   英文节点名仍然是桑基图");
+} else {
+  fail += 1;
+  problems.push("英文节点名没有生成桑基图");
 }
 
 console.log(`\n完整模板：通过 ${pass} / ${pass + fail}`);

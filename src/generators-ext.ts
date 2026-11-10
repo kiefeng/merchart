@@ -404,34 +404,71 @@ export function buildRadar(text: string): BuildResult {
 export function buildSankey(text: string): BuildResult {
   const lines = meaningfulLines(normalizePunctuation(text));
   const warnings: string[] = [];
-  const rows: string[] = [];
-  const names: string[] = [];
+  const flows: { from: string; to: string; value: string }[] = [];
 
   for (const raw of lines) {
     const line = raw.trim();
     const a = splitArrow(line);
     if (a && a.label) {
-      rows.push(`${a.from},${a.to},${a.label}`);
-      names.push(a.from, a.to);
+      flows.push({ from: a.from, to: a.to, value: a.label });
       continue;
     }
     const parts = line.split(",").map((s) => s.trim());
     if (parts.length === 3 && parts.every(Boolean)) {
-      rows.push(`${parts[0]},${parts[1]},${parts[2]}`);
-      names.push(parts[0], parts[1]);
+      flows.push({ from: parts[0], to: parts[1], value: parts[2] });
       continue;
     }
     warnings.push(`跳过无法识别的行：${line}（要写成「来源 > 去向 : 数值」）`);
   }
 
-  if (rows.length === 0) return { code: "", warnings };
+  if (flows.length === 0) return { code: "", warnings };
 
-  // Obsidian 的桑基图渲染器只认 ASCII 单元格，中文节点名会让整张图解析失败
-  if (names.some((n) => /[^\x20-\x7E]/.test(n))) {
-    warnings.push("桑基图的节点名只能是英文或数字，中文会让整张图解析失败；中文标注建议改用流程图");
+  // Obsidian 的桑基图渲染器只认 ASCII 单元格（加引号也不行），
+  // 中文节点名画不出来，改画流程图：数值挂连线上，线宽按流量缩放。
+  if (flows.some((f) => /[^\x20-\x7E]/.test(f.from) || /[^\x20-\x7E]/.test(f.to))) {
+    warnings.push("桑基图渲染器只认英文节点名，已改成流程图版：数值写在连线上，线宽表示流量大小");
+    return { code: buildFlowFallback(flows), warnings };
   }
 
+  const rows = flows.map((f) => `${f.from},${f.to},${f.value}`);
   return { code: ["sankey-beta", ...rows].join("\n"), warnings };
+}
+
+/** 桑基图的中文替代版：同样的流向和数值，画成节点 + 带数字的连线 */
+function buildFlowFallback(flows: { from: string; to: string; value: string }[]): string {
+  const ids = new Map<string, string>();
+  const shapes: string[] = [];
+  const edges: string[] = [];
+  const styles: string[] = [];
+
+  const idOf = (name: string): string => {
+    const existing = ids.get(name);
+    if (existing) return existing;
+    const id = `n${ids.size + 1}`;
+    ids.set(name, id);
+    shapes.push(`  ${id}["${escapeLabel(name)}"]`);
+    return id;
+  };
+
+  const numbers = flows
+    .map((f) => Number.parseFloat(f.value))
+    .filter((n) => Number.isFinite(n) && n > 0);
+  const max = numbers.length ? Math.max(...numbers) : 0;
+
+  flows.forEach((f, index) => {
+    const from = idOf(f.from);
+    const to = idOf(f.to);
+    const label = f.value.replace(/"/g, "#quot;");
+    edges.push(`  ${from} -->|"${label}"| ${to}`);
+
+    const value = Number.parseFloat(f.value);
+    if (max > 0 && Number.isFinite(value) && value > 0) {
+      const width = (1.5 + 6.5 * (value / max)).toFixed(1);
+      styles.push(`  linkStyle ${index} stroke-width:${width}px`);
+    }
+  });
+
+  return ["flowchart TD", ...shapes, ...edges, ...styles].join("\n");
 }
 
 /* ------------------------------------------------------------------ */
@@ -445,6 +482,17 @@ export function buildXychart(text: string): BuildResult {
   let xValues: string[] = [];
   let yValues: number[] = [];
   let chartType: "bar" | "line" = "bar";
+  const series: { type: "bar" | "line"; name: string; values: number[] }[] = [];
+
+  const toNumbers = (parts: string[], where: string): number[] =>
+    parts.map((s) => {
+      const num = Number(s);
+      if (Number.isNaN(num)) {
+        warnings.push(`${where}里的「${s}」不是数字，按 0 处理`);
+        return 0;
+      }
+      return num;
+    });
 
   for (const raw of lines) {
     const line = raw.trim();
@@ -461,37 +509,62 @@ export function buildXychart(text: string): BuildResult {
       chartType = /线|line/i.test(rest) ? "line" : "bar";
       continue;
     }
-    if (head === "x" || head === "x轴") {
+    if (head === "x" || head === "x轴" || head === "xaxis") {
       xValues = rest.split(",").map((s) => s.trim()).filter(Boolean);
       continue;
     }
-    if (head === "y" || head === "y轴") {
-      yValues = rest
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .map((s) => {
-          const num = Number(s);
-          if (Number.isNaN(num)) {
-            warnings.push(`y 里的「${s}」不是数字，按 0 处理`);
-            return 0;
-          }
-          return num;
-        });
+    if (head === "y" || head === "y轴" || head === "yaxis") {
+      yValues = toNumbers(
+        rest.split(",").map((s) => s.trim()).filter(Boolean),
+        "y "
+      );
+      continue;
+    }
+
+    // 「柱: 今年, 40, 85」/「线: 去年, 30, 70」：一组数据一行，名字可省
+    const isBar = /^(柱|柱状|bar)$/i.test(head);
+    const isLine = /^(线|折线|line)$/i.test(head);
+    if (isBar || isLine) {
+      const parts = rest.split(",").map((s) => s.trim()).filter(Boolean);
+      if (parts.length === 0) {
+        warnings.push(`「${head}」这一行没有数值，已跳过`);
+        continue;
+      }
+      let name = "";
+      if (!/^-?\d+(\.\d+)?$/.test(parts[0])) name = parts.shift() ?? "";
+      series.push({ type: isBar ? "bar" : "line", name, values: toNumbers(parts, `${head} `) });
       continue;
     }
   }
 
-  if (xValues.length === 0 || yValues.length === 0) {
-    return { code: "", warnings: [...warnings, "至少要写「x: 类别, 类别」和「y: 数值, 数值」"] };
+  if (xValues.length === 0) {
+    return { code: "", warnings: [...warnings, "至少要写「x: 类别, 类别」"] };
+  }
+  if (series.length === 0 && yValues.length === 0) {
+    return { code: "", warnings: [...warnings, "至少要写「y: 数值, 数值」，或者用「柱: 今年, 40, 85」写多组"] };
   }
 
+  for (const s of series) {
+    if (s.values.length !== xValues.length) {
+      warnings.push(`「${s.name || (s.type === "bar" ? "柱" : "线")}」有 ${s.values.length} 个数值，x 轴有 ${xValues.length} 个类别`);
+    }
+  }
+
+  const plotted = series.length > 0 ? series.flatMap((s) => s.values) : yValues;
   const body: string[] = ["xychart-beta"];
   if (title) body.push(`  title "${escapeLabel(title)}"`);
   body.push(`  x-axis [${xValues.map((v) => `"${escapeLabel(v)}"`).join(", ")}]`);
-  const maxY = Math.max(...yValues, 1);
+  const maxY = Math.max(...plotted, 1);
   body.push(`  y-axis 0 --> ${Math.ceil(maxY * 1.2)}`);
-  body.push(`  ${chartType} [${yValues.join(", ")}]`);
+
+  if (series.length > 0) {
+    for (const s of series) {
+      const label = s.name ? ` "${escapeLabel(s.name)}"` : "";
+      body.push(`  ${s.type}${label} [${s.values.join(", ")}]`);
+    }
+  } else {
+    body.push(`  ${chartType} [${yValues.join(", ")}]`);
+  }
 
   return { code: body.join("\n"), warnings };
 }
