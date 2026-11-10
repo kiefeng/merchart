@@ -119,7 +119,7 @@ Works on desktop and mobile. On narrow screens the dialog goes full screen, the 
 ## Known limits
 
 - Six types only offer code templates, with no structured form (the other sixteen can switch over).
-- Reverse editing covers five types; the rest put the source code straight into the input box.
+- Reverse editing covers five types, and only when the code round-trips exactly; anything with subgraphs, styling or comments opens as code instead of being quietly simplified.
 - Reverse editing covers five types; the rest open as raw code in the input box.
 
 ## Development

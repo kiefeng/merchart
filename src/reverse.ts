@@ -1,3 +1,4 @@
+import { BUILDERS, type BuilderKind } from "./build";
 import type { DiagramKind } from "./types";
 
 /**
@@ -6,11 +7,26 @@ import type { DiagramKind } from "./types";
  * 只处理自己生成的那些稳定形态，解不出来就返回 null，
  * 由调用方决定退回原样展示还是保持不动。宁可不解，也不要解错。
  */
-
 export function reverseFor(kind: DiagramKind, code: string): string | null {
   const text = code.trim();
   if (!text) return null;
 
+  const guess = rawReverse(kind, text);
+  if (!guess) return null;
+
+  // 解出来的东西再生成一遍，必须和原文一字不差；
+  // 否则说明原文里有子图、样式、注释这类结构化输入表达不了的东西，
+  // 让用户接着用生成器改，等于把这些行悄悄删掉。
+  const build = BUILDERS[kind as BuilderKind];
+  if (!build) return null;
+  try {
+    return build(guess).code.trim() === text ? guess : null;
+  } catch {
+    return null;
+  }
+}
+
+function rawReverse(kind: DiagramKind, text: string): string | null {
   switch (kind) {
     case "timeline":
       return reverseTimeline(text);

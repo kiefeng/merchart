@@ -1,6 +1,7 @@
 import { DIAGRAMS } from "../src/diagrams";
 import { buildFor } from "../src/build";
 import { detectKind, reverseFor } from "../src/reverse";
+import { FULL_TEMPLATES } from "../src/templates";
 import type { DiagramKind } from "../src/types";
 
 const SUPPORTED: DiagramKind[] = ["flowchart", "sequence", "pie", "timeline", "mindmap"];
@@ -46,5 +47,16 @@ for (const kind of SUPPORTED) {
   }
 }
 
-console.log(`\n反向编辑：一致 ${pass} / 不一致 ${fail}，共 ${SUPPORTED.length} 种`);
+/* 完整模板不能被反向解析：不然切到结构化输入时，子图、样式、注释会被悄悄吞掉 */
+for (const kind of SUPPORTED) {
+  if (reverseFor(kind, FULL_TEMPLATES[kind])) {
+    fail += 1;
+    console.log(`[LEAK] ${kind} 的完整模板被解成了结构化输入，复杂写法会丢`);
+  } else {
+    pass += 1;
+    console.log(`[OK]   ${kind} 完整模板保持代码编辑`);
+  }
+}
+
+console.log(`\n反向编辑：通过 ${pass} / 失败 ${fail}`);
 process.exit(fail === 0 ? 0 : 1);
