@@ -405,23 +405,32 @@ export function buildSankey(text: string): BuildResult {
   const lines = meaningfulLines(normalizePunctuation(text));
   const warnings: string[] = [];
   const rows: string[] = [];
+  const names: string[] = [];
 
   for (const raw of lines) {
     const line = raw.trim();
     const a = splitArrow(line);
     if (a && a.label) {
       rows.push(`${a.from},${a.to},${a.label}`);
+      names.push(a.from, a.to);
       continue;
     }
     const parts = line.split(",").map((s) => s.trim());
     if (parts.length === 3 && parts.every(Boolean)) {
       rows.push(`${parts[0]},${parts[1]},${parts[2]}`);
+      names.push(parts[0], parts[1]);
       continue;
     }
     warnings.push(`跳过无法识别的行：${line}（要写成「来源 > 去向 : 数值」）`);
   }
 
   if (rows.length === 0) return { code: "", warnings };
+
+  // Obsidian 的桑基图渲染器只认 ASCII 单元格，中文节点名会让整张图解析失败
+  if (names.some((n) => /[^\x20-\x7E]/.test(n))) {
+    warnings.push("桑基图的节点名只能是英文或数字，中文会让整张图解析失败；中文标注建议改用流程图");
+  }
+
   return { code: ["sankey-beta", ...rows].join("\n"), warnings };
 }
 

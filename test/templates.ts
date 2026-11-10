@@ -1,4 +1,5 @@
 import { DIAGRAMS } from "../src/diagrams";
+import { buildFor } from "../src/build";
 import { FULL_TEMPLATES } from "../src/templates";
 import { repairSyntaxPunctuation } from "../src/chinese";
 import { render } from "pele";
@@ -106,6 +107,30 @@ for (const c of cases) {
     fail += 1;
     problems.push(`${c.name}：期望 ${JSON.stringify(c.expect)}，实际 ${JSON.stringify(got)}`);
   }
+}
+
+/* 桑基图：Obsidian 1.15 的渲染器只认 ASCII 单元格，中文节点名整张图都画不出来 */
+const sankeyDef = DIAGRAMS.find((d) => d.kind === "sankey")!;
+const sankeyBody = FULL_TEMPLATES.sankey
+  .split("\n")
+  .filter((line) => !/^\s*%%/.test(line))
+  .join("\n");
+
+if (/[^\x20-\x7E\n]/.test(sankeyBody)) {
+  fail += 1;
+  problems.push("桑基图模板里有非 ASCII 节点名，在 Obsidian 里会解析失败");
+} else {
+  pass += 1;
+  console.log("[OK]   桑基图模板节点名全是 ASCII");
+}
+
+const chineseName = buildFor(sankeyDef, "访问 > 注册 : 60");
+if (chineseName.warnings.some((w) => w.includes("解析失败"))) {
+  pass += 1;
+  console.log("[OK]   中文节点名给出 ASCII 提示");
+} else {
+  fail += 1;
+  problems.push("中文节点名没有提示渲染器只认 ASCII");
 }
 
 console.log(`\n完整模板：通过 ${pass} / ${pass + fail}`);

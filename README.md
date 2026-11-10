@@ -53,6 +53,8 @@ Merchart handles all three before the parser ever sees the text:
 2. **Full-width punctuation is folded.** `，` `：` `；` `（）` `【】` `｜` and friends are converted first.
 3. **Quotes and brackets inside labels are escaped**, so a label containing `"` or `[` cannot truncate the statement.
 
+One exception worth stating plainly: **Sankey node names must be ASCII**. Obsidian 1.15's renderer only accepts printable ASCII inside a Sankey cell, so a Chinese node name fails to parse even when quoted. The plugin warns when it sees one; use English, pinyin, or a flowchart instead.
+
 You write what you mean; the plugin produces what the parser accepts.
 
 ## Install
@@ -119,8 +121,9 @@ Works on desktop and mobile. On narrow screens the dialog goes full screen, the 
 ## Known limits
 
 - Six types only offer code templates, with no structured form (the other sixteen can switch over).
+- Sankey node names are ASCII only; Chinese names cannot be drawn, which is a renderer limit.
+- XY charts have no data labels; add a table when the exact numbers matter.
 - Reverse editing covers five types, and only when the code round-trips exactly; anything with subgraphs, styling or comments opens as code instead of being quietly simplified.
-- Reverse editing covers five types; the rest open as raw code in the input box.
 
 ## Development
 
