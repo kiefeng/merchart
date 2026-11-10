@@ -13,6 +13,7 @@ An Obsidian plugin that makes Mermaid diagrams practical: write plain lines, wat
 ## Features
 
 - **22 diagram types**, covering everything Obsidian's renderer supports
+- **A full template for every type**: shapes, groups, styling, comments and relation kinds are all spelled out, so adding something means editing a line instead of re-reading the syntax docs
 - **Built for Chinese input**: identifiers are generated for you, full-width punctuation is normalized, labels keep your text
 - **Live preview** while you type
 - **Seven commands**: one general inserter plus one per common type, all bindable to hotkeys
@@ -77,7 +78,7 @@ To revise an existing diagram you do not need a command: put the cursor inside t
 
 ## Diagram types
 
-Sixteen take structured Chinese input; six are editable templates because their syntax is declarative.
+Sixteen take structured input; six are editable templates because their syntax is declarative. The sixteen structured ones get a **Full template** button next to the title, which swaps in the complete Mermaid code and back again.
 
 | Type | Input format |
 |---|---|
@@ -117,7 +118,8 @@ Works on desktop and mobile. On narrow screens the dialog goes full screen, the 
 
 ## Known limits
 
-- Six types are templates you edit directly rather than structured forms.
+- Six types only offer code templates, with no structured form (the other sixteen can switch over).
+- Reverse editing covers five types; the rest put the source code straight into the input box.
 - Reverse editing covers five types; the rest open as raw code in the input box.
 
 ## Development
@@ -125,7 +127,7 @@ Works on desktop and mobile. On narrow screens the dialog goes full screen, the 
 ```bash
 npm install
 npm run build          # typecheck + bundle to main.js
-npm test               # 22 diagram types plus 18 edge cases, rendered through Pele
+npm test               # 22 diagram types, 18 edge cases and 22 full templates, rendered through Pele
 ```
 
 Every generated diagram is rendered through `pele` during tests, so a syntax regression fails the build instead of showing up as a broken diagram in your vault.

@@ -1,12 +1,12 @@
 {
   "name": "merchart",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Obsidian plugin: build Mermaid diagrams from Chinese input",
   "main": "main.js",
   "scripts": {
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "dev": "node esbuild.config.mjs",
-    "test": "npx esbuild test/run.ts --bundle --platform=node --format=cjs --outfile=test/run.cjs --log-level=warning && node test/run.cjs && npx esbuild test/edge.ts --bundle --platform=node --format=cjs --outfile=test/edge.cjs --log-level=warning && node test/edge.cjs && npx esbuild test/reverse.ts --bundle --platform=node --format=cjs --outfile=test/reverse.cjs --log-level=warning && node test/reverse.cjs"
+    "test": "npx esbuild test/run.ts --bundle --platform=node --format=cjs --outfile=test/run.cjs --log-level=warning && node test/run.cjs && npx esbuild test/edge.ts --bundle --platform=node --format=cjs --outfile=test/edge.cjs --log-level=warning && node test/edge.cjs && npx esbuild test/reverse.ts --bundle --platform=node --format=cjs --outfile=test/reverse.cjs --log-level=warning && node test/reverse.cjs && npx esbuild test/templates.ts --bundle --platform=node --format=cjs --outfile=test/templates.cjs --log-level=warning && node test/templates.cjs"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",

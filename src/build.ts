@@ -18,6 +18,7 @@ import {
   buildTreemap,
   buildXychart,
 } from "./generators-ext";
+import { repairSyntaxPunctuation } from "./chinese";
 import type { BuildResult, DiagramDef, DiagramKind } from "./types";
 
 export type BuilderKind = Exclude<
@@ -45,9 +46,15 @@ export const BUILDERS: Record<BuilderKind, (text: string) => BuildResult> = {
 };
 
 export function buildFor(def: DiagramDef, text: string): BuildResult {
-  if (def.mode === "template") {
-    const code = text.trim();
-    return { code, warnings: [] };
+  const result = def.mode === "template"
+    ? { code: text.trim(), warnings: [] as string[] }
+    : BUILDERS[def.kind as BuilderKind](text);
+
+  // 兜底：模板是人手写的，全角标点混进语法位就整张图崩，先换成半角再往下走
+  const repaired = repairSyntaxPunctuation(result.code);
+  if (repaired.count > 0) {
+    result.code = repaired.code;
+    result.warnings.push(`把 ${repaired.count} 处全角标点换成了半角，Mermaid 只认半角`);
   }
-  return BUILDERS[def.kind as BuilderKind](text);
+  return result;
 }

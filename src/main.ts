@@ -14,6 +14,7 @@ import {
 } from "obsidian";
 import type { SettingDefinitionItem } from "obsidian";
 import { DIAGRAMS } from "./diagrams";
+import { FULL_TEMPLATES } from "./templates";
 import { buildFor } from "./build";
 import { detectKind, reverseFor } from "./reverse";
 import {
@@ -274,6 +275,8 @@ class DiagramModal extends Modal {
 
   private current: DiagramDef = DIAGRAMS[0];
   private result: BuildResult = { code: "", warnings: [] };
+  /** true 表示输入框里装的是完整 Mermaid 代码，原样插入 */
+  private templateMode = false;
   private timer: number | null = null;
   private component = new Component();
 
@@ -281,6 +284,7 @@ class DiagramModal extends Modal {
   private searchEl!: HTMLInputElement;
   private diagramTitleEl!: HTMLElement;
   private hintEl!: HTMLElement;
+  private modeBtn!: HTMLButtonElement;
   private inputEl!: HTMLTextAreaElement;
   private rulesEl!: HTMLElement;
   private previewEl!: HTMLElement;
@@ -348,6 +352,8 @@ class DiagramModal extends Modal {
     const head = main.createDiv({ cls: "mc-head" });
     this.diagramTitleEl = head.createDiv({ cls: "mc-title" });
     this.hintEl = head.createDiv({ cls: "mc-hint" });
+    this.modeBtn = head.createEl("button", { cls: "mc-mode" });
+    this.modeBtn.addEventListener("click", () => this.toggleTemplateMode());
 
     this.inputEl = main.createEl("textarea", {
       cls: "mc-input",
@@ -414,7 +420,15 @@ class DiagramModal extends Modal {
       if (kind && def) {
         this.select(def, false);
         const reversed = reverseFor(kind, blockCode);
-        this.inputEl.value = reversed ?? blockCode;
+        if (reversed) {
+          this.templateMode = false;
+          this.inputEl.value = reversed;
+        } else {
+          // 解不回结构化输入，就整块按代码编辑，别让生成器去猜
+          this.templateMode = true;
+          this.inputEl.value = blockCode;
+        }
+        this.updateModeButton();
         this.autoSizeInput();
         this.scheduleBuild(0);
       }
@@ -620,10 +634,12 @@ class DiagramModal extends Modal {
 
   private select(def: DiagramDef, remember: boolean): void {
     this.current = def;
+    this.templateMode = def.mode === "template";
     this.diagramTitleEl.setText(displayName(def, this.lang));
     this.hintEl.setText(displayHint(def, this.lang));
-    this.inputEl.value = def.placeholder;
+    this.inputEl.value = this.templateMode ? FULL_TEMPLATES[def.kind] ?? def.placeholder : def.placeholder;
     this.inputEl.placeholder = def.placeholder;
+    this.updateModeButton();
 
     this.rulesEl.empty();
     for (const rule of displayRules(def, this.lang)) {
@@ -644,6 +660,29 @@ class DiagramModal extends Modal {
     this.inputEl.focus();
   }
 
+  /** 生成器类图可以一键换成完整模板；模板本身已经是代码，不显示这个开关 */
+  private updateModeButton(): void {
+    const builder = this.current.mode === "builder";
+    this.modeBtn.toggleAttribute("hidden", !builder);
+    if (!builder) return;
+    this.modeBtn.setText(this.templateMode ? this.t.basicInput : this.t.fullTemplate);
+    this.modeBtn.setAttribute("aria-label", this.t.templateModeHint);
+    this.modeBtn.title = this.t.templateModeHint;
+    this.modeBtn.toggleClass("is-on", this.templateMode);
+  }
+
+  private toggleTemplateMode(): void {
+    if (this.current.mode !== "builder") return;
+    this.templateMode = !this.templateMode;
+    this.inputEl.value = this.templateMode
+      ? FULL_TEMPLATES[this.current.kind] ?? this.current.placeholder
+      : this.current.placeholder;
+    this.updateModeButton();
+    this.autoSizeInput();
+    this.scheduleBuild(0);
+    this.inputEl.focus();
+  }
+
   /* ---------------- 生成与预览 ---------------- */
 
   private scheduleBuild(delay = 200): void {
@@ -652,7 +691,8 @@ class DiagramModal extends Modal {
   }
 
   private async build(): Promise<void> {
-    const result = buildFor(this.current, this.inputEl.value);
+    const def: DiagramDef = this.templateMode ? { ...this.current, mode: "template" } : this.current;
+    const result = buildFor(def, this.inputEl.value);
     this.result = result;
     this.warnEl.setText(result.warnings.join(this.lang === "zh" ? "；" : "; "));
 

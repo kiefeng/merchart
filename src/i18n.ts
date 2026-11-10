@@ -41,6 +41,9 @@ export interface UiStrings {
   resizeHint: string;
   renderFailed: string;
   commandEditHere: string;
+  fullTemplate: string;
+  basicInput: string;
+  templateModeHint: string;
 }
 
 const ZH: UiStrings = {
@@ -71,6 +74,9 @@ const ZH: UiStrings = {
   resizeHint: "拖动调整大小",
   renderFailed: "渲染失败，检查一下语法",
   commandEditHere: "用 Merchart 编辑这张图",
+  fullTemplate: "完整模板",
+  basicInput: "基础输入",
+  templateModeHint: "这是完整的 Mermaid 代码，改字即用；再点一次回到基础输入",
 };
 
 const EN: UiStrings = {
@@ -101,6 +107,9 @@ const EN: UiStrings = {
   resizeHint: "Drag to resize",
   renderFailed: "Render failed. Check the syntax.",
   commandEditHere: "Edit this diagram with Merchart",
+  fullTemplate: "Full template",
+  basicInput: "Basic input",
+  templateModeHint: "Full Mermaid code, edit in place. Click again for the basic input.",
 };
 
 export function ui(lang: Lang): UiStrings {

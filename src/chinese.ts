@@ -37,6 +37,55 @@ export function normalizePunctuation(input: string): string {
   return out;
 }
 
+/**
+ * 兜底修复：整块 Mermaid 代码里，语法位的全角标点换成半角。
+ *
+ * 生成器自己不会写出全角，但模板是把用户代码原样拿过来的——那边一旦有
+ * 全角逗号，Sankey、XY、看板这类按语法切分的图就会直接解析失败。
+ * 引号里的内容是标签文字，一个字都不动；每行重算，避免跨行引号错位。
+ */
+const SYNTAX_PUNCT: Record<string, string> = {
+  "，": ",",
+  "：": ":",
+  "；": ";",
+  "（": "(",
+  "）": ")",
+  "｛": "{",
+  "｝": "}",
+  "｜": "|",
+  "＞": ">",
+  "＜": "<",
+  "＝": "=",
+  "　": " ",
+};
+
+export function repairSyntaxPunctuation(code: string): { code: string; count: number } {
+  let count = 0;
+  const lines = code.split("\n").map((line) => {
+    // 注释行是给人看的，不参与解析，原样留着
+    if (/^\s*%%/.test(line)) return line;
+
+    let inQuote = false;
+    let out = "";
+    for (const ch of line) {
+      if (ch === '"') {
+        inQuote = !inQuote;
+        out += ch;
+        continue;
+      }
+      const half = SYNTAX_PUNCT[ch];
+      if (!inQuote && half) {
+        out += half;
+        count += 1;
+        continue;
+      }
+      out += ch;
+    }
+    return out;
+  });
+  return { code: lines.join("\n"), count };
+}
+
 /** 标签里会被 Mermaid 当语法字符吃掉的东西，做最小转义 */
 export function escapeLabel(text: string): string {
   return text.replace(/"/g, "#quot;").replace(/[[\]]/g, (m) => (m === "[" ? "#91;" : "#93;"));

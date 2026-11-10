@@ -1,9 +1,9 @@
 {
   "id": "merchart",
   "name": "Merchart",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "minAppVersion": "1.4.0",
-  "description": "Write Mermaid diagrams without the syntax: 22 types, live preview, one-click insert. Chinese input gets extra handling for identifiers and punctuation.",
+  "description": "Write Mermaid diagrams without the syntax: 22 types, full templates, live preview, one-click insert. Chinese input gets extra handling for identifiers and punctuation.",
   "author": "Kieran",
   "authorUrl": "https://github.com/kiefeng",
   "isDesktopOnly": false
