@@ -184,7 +184,10 @@ class MerchartSettingTab extends PluginSettingTab {
 
   getControlValue(key: string): unknown {
     const settings = this.plugin.settings as unknown as Record<string, unknown>;
-    if (key === "indentSize") return String(settings.indentSize ?? 2);
+    if (key === "indentSize") {
+      const size = settings.indentSize;
+      return String(typeof size === "number" ? size : 2);
+    }
     return settings[key];
   }
 

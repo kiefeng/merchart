@@ -137,7 +137,7 @@ function reverseMindmap(code: string): string | null {
   for (const line of raw.slice(1)) {
     if (!line.trim()) continue;
     const indent = /^[ \t]*/.exec(line)?.[0].replace(/\t/g, "  ").length ?? 0;
-    let text = line.trim();
+    const text = line.trim();
     const root = /^\(\((.*)\)\)$/.exec(text);
     if (root) {
       out.push(root[1]);

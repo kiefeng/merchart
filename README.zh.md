@@ -131,6 +131,7 @@ Obsidian 1.4 及以上。1.15 之后 Mermaid 块由 Pele 渲染，预览会自�
 ```bash
 npm install
 npm run build          # 类型检查 + 打包出 main.js
+npm run lint           # 走一遍 obsidianmd 的规则，社区目录审核看的就是这些
 npm test               # 22 种图 + 22 个边界用例 + 22 份完整模板，全部经 Pele 渲染验证
 ```
 

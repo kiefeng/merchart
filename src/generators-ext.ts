@@ -453,7 +453,10 @@ function buildFlowFallback(flows: { from: string; to: string; value: string }[])
   const numbers = flows
     .map((f) => Number.parseFloat(f.value))
     .filter((n) => Number.isFinite(n) && n > 0);
-  const max = numbers.length ? Math.max(...numbers) : 0;
+  let max = 0;
+  for (const n of numbers) {
+    if (n > max) max = n;
+  }
 
   flows.forEach((f, index) => {
     const from = idOf(f.from);
@@ -550,11 +553,18 @@ export function buildXychart(text: string): BuildResult {
     }
   }
 
-  const plotted = series.length > 0 ? series.flatMap((s) => s.values) : yValues;
+  let maxY = 1;
+  const track = (values: number[]): void => {
+    for (const value of values) {
+      if (value > maxY) maxY = value;
+    }
+  };
+  for (const s of series) track(s.values);
+  if (series.length === 0) track(yValues);
+
   const body: string[] = ["xychart-beta"];
   if (title) body.push(`  title "${escapeLabel(title)}"`);
   body.push(`  x-axis [${xValues.map((v) => `"${escapeLabel(v)}"`).join(", ")}]`);
-  const maxY = Math.max(...plotted, 1);
   body.push(`  y-axis 0 --> ${Math.ceil(maxY * 1.2)}`);
 
   if (series.length > 0) {

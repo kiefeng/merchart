@@ -130,6 +130,7 @@ Works on desktop and mobile. On narrow screens the dialog goes full screen, the 
 ```bash
 npm install
 npm run build          # typecheck + bundle to main.js
+npm run lint           # run the obsidianmd rules the community review uses
 npm test               # 22 diagram types, 22 edge cases and 22 full templates, rendered through Pele
 ```
 

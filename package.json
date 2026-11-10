@@ -1,20 +1,28 @@
 {
   "name": "merchart",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Obsidian plugin: build Mermaid diagrams from Chinese input",
   "main": "main.js",
   "scripts": {
     "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
     "dev": "node esbuild.config.mjs",
+    "lint": "eslint src",
     "test": "npx esbuild test/run.ts --bundle --platform=node --format=cjs --outfile=test/run.cjs --log-level=warning && node test/run.cjs && npx esbuild test/edge.ts --bundle --platform=node --format=cjs --outfile=test/edge.cjs --log-level=warning && node test/edge.cjs && npx esbuild test/reverse.ts --bundle --platform=node --format=cjs --outfile=test/reverse.cjs --log-level=warning && node test/reverse.cjs && npx esbuild test/templates.ts --bundle --platform=node --format=cjs --outfile=test/templates.cjs --log-level=warning && node test/templates.cjs"
+  },
+  "dependencies": {
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.13"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^20.11.0",
     "esbuild": "^0.21.5",
+    "eslint": "^9.39.5",
+    "eslint-plugin-obsidianmd": "^0.5.1",
     "obsidian": "latest",
     "pele": "^1.13.0",
     "tslib": "^2.6.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^8.72.2"
   }
 }
